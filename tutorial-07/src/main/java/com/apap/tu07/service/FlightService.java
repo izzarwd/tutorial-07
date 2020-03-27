@@ -1,6 +1,7 @@
 package com.apap.tu07.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.apap.tu07.model.FlightModel;
 
@@ -14,6 +15,8 @@ public interface FlightService {
     void updateFlight(FlightModel flightModel);
 	
     FlightModel flightById(long id);
+    
+    Optional<FlightModel> findByFlightNumber(String flightNumber);
 	
     void removeFlight(long id);
 	

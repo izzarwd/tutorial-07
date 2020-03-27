@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.apap.tu07.model.FlightModel;
+import com.apap.tu07.model.PilotModel;
 import com.apap.tu07.service.FlightService;
+import com.apap.tu07.service.PilotService;
 
 /**
  * FlightController
@@ -26,9 +29,14 @@ public class FlightController {
     @Autowired
     private FlightService flightService;
     
-    @PostMapping(value="/add")
-	public FlightModel addFlight(@RequestBody FlightModel flight) {
-		return flightService.addFlight(flight);
+    @Autowired
+    private PilotService pilotService;
+    
+    @PostMapping(value="/add/{licenseNumber}")
+	public FlightModel addFlight(@PathVariable(value="licenseNumber")String licenseNumber, @RequestBody FlightModel flight, Model model) {
+    	PilotModel pilot = pilotService.getPilotDetailByLicenseNumber(licenseNumber).get();
+    	flight.setPilot(pilot);
+    	return flightService.addFlight(flight);
 	}
 	
 	@PutMapping(value="/update/{flightId}")
@@ -50,9 +58,9 @@ public class FlightController {
 		return "flight has been deleted";
 	}
 	
-	@GetMapping(value="/view/{flightId}")
-	public FlightModel getFlight(@PathVariable("flightId") long id) {
-		FlightModel flight = flightService.flightById(id);
+	@GetMapping(value="/view/{flightNumber}")
+	public FlightModel getFlight(@PathVariable("flightNumber") String flightNumber) {
+		FlightModel flight = flightService.findByFlightNumber(flightNumber).get();
 		return flight;
 	}
 	
